@@ -1,12 +1,42 @@
 const productsContainer = document.querySelector("#products");
+const productsURL = "https://61e40755fbee6800175eb189.mockapi.io/products/phones";
+
+function getData(url, callback) {
+    fetch(url).
+        then(response => response.json()).
+        then(result => callback(result)).
+        catch(error => console.error(error));
+
+}
+
+function sortAscendingPrice() {
+    getData(productsURL, products => {
+        products.sort((product1, product2) => product1.productPrice - product2.productPrice);
+        renderProductList(products);
+    });
+}
+
+function sortDescendingPrice() {
+    getData(productsURL, products => {
+        products.sort((product1, product2) => product2.productPrice - product1.productPrice);
+        renderProductList(products);
+    });
+}
+
+function renderProductList(products) {
+            // console.log(products);
+        products.forEach((product) => {
+            // console.log(product.productPrice);
+            renderProduct(product)
+        });
+}
 
 function loadProducts() {
-    fetch("https://61e40755fbee6800175eb189.mockapi.io/products/phones").
-        then(response => response.json()).
-        then(products => {     
-            products.forEach((product) => renderProduct(product))
-        }).
-        catch(error => console.error(error));
+    getData(productsURL, products => renderProductList(products));    
+}
+
+function clearProductList() {
+    productsContainer.innerHTML = "";
 }
 
 document.
@@ -15,7 +45,29 @@ document.
 
 document.
     querySelector("#empty-list-button").
-    addEventListener("click", () => productsContainer.innerHTML = "");
+    addEventListener("click", clearProductList);
+
+document.
+    querySelector("#sort-asc-button").
+    addEventListener("click", () => {
+        if (productsContainer.innerHTML === "") {
+            alert("Please get the product list first!");
+            return
+        }
+        clearProductList();
+        sortAscendingPrice();
+    });
+
+document.
+    querySelector("#sort-desc-button").
+    addEventListener("click", () => {
+        if (productsContainer.innerHTML === "") {
+            alert("Please get the product list first!");
+            return
+        }
+        clearProductList();
+        sortDescendingPrice();
+    });
 
 function renderProduct(product) {
     const { productName, productImage, productPrice, productStockStatus, productRating } = product;
@@ -54,11 +106,11 @@ function getRating(rating) {
 
 
 function getStockStatus(status) {
-    if (status === true) { return "In stock"};
+    if (status === true) { return "In stock" };
     if (status === false) { return "Out of stock" };
 }
 
 function getStockClass(status) {
-    if (status === true) { return "in-stock"};
+    if (status === true) { return "in-stock" };
     if (status === false) { return "out-of-stock" };
 }
