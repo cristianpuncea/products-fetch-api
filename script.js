@@ -19,18 +19,30 @@ function clearProductList() {
     productsContainer.innerHTML = "";
 }
 
-function sortAscendingPrice() {
-    getData(productsURL, products => {
-        products.sort((product1, product2) => product1.productPrice - product2.productPrice);
-        renderProductList(products);
+function sortAscendingPrice(products) {
+    const productsDivList = document.querySelectorAll(".product"); 
+    const productsArray = Array.from(productsDivList); 
+ 
+    productsArray.sort((product1, product2) => {        
+        const price1 = parseFloat(product1.querySelector(".price-value").innerText);
+        const price2 = parseFloat(product2.querySelector(".price-value").innerText);
+        return price1 - price2;
     });
+
+    productsArray.forEach(product => productsContainer.appendChild(product));
 }
 
 function sortDescendingPrice() {
-    getData(productsURL, products => {
-        products.sort((product1, product2) => product2.productPrice - product1.productPrice);
-        renderProductList(products);
+    const productsDivList = document.querySelectorAll(".product"); 
+    const productsArray = Array.from(productsDivList); 
+ 
+    productsArray.sort((product1, product2) => {        
+        const price1 = parseFloat(product1.querySelector(".price-value").innerText);
+        const price2 = parseFloat(product2.querySelector(".price-value").innerText);
+        return price2 - price1;
     });
+
+    productsArray.forEach(product => productsContainer.appendChild(product));
 }
 
 function renderProductList(products) {
@@ -59,7 +71,7 @@ function renderProduct(product) {
                     </div>
 
                     <div class="card-details row">
-                        <h5 class="card-text col-12"><span class="price-text">Price: </span>${productPrice}$</h5>                    
+                        <h5 class="card-text col-12"><span class="price-text">Price: </span><span class="price-value">${productPrice}</span>$</h5>                    
                         <a href="#" class="btn btn-primary col-6 see-details-button" data-bs-toggle="modal" id="prodID-${productId}" data-bs-target="#exampleModal">See details</a>
                         <p class="stock-status ${stockClass} col-6">${stockStatus}</p>
                     </div>
@@ -151,9 +163,10 @@ document.
             alert("Please get the product list first!");
             return
         }
-        clearProductList();
         sortAscendingPrice();
     });
+
+// document.querySelector("#sort-asc-button").addEventListener("click", sortAscendingPrice);
 
 document.
     querySelector("#sort-desc-button").
@@ -162,7 +175,6 @@ document.
             alert("Please get the product list first!");
             return
         }
-        clearProductList();
         sortDescendingPrice();
     });
 
